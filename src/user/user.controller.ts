@@ -6,7 +6,7 @@ import { IUser } from './user.interface';
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get('test')
-  test(): string {
+  test(): IUser[] {
     return this.userService.test();
   }
   @Get()

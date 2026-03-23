@@ -5,8 +5,8 @@ import { IUser } from './user.interface';
 
 @Injectable()
 export class UserService {
-  test(): string {
-    return '[]';
+  test(): IUser[]{
+    return [];
   }
   findAll(): IUser[] {
     const filePath = path.join(process.cwd(), 'data', 'users.json');
