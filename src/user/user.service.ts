@@ -1,8 +1,10 @@
+import { CreateUserDto } from './dto/create-user.dto';
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { IUser } from './user.interface';
 import { NotFoundException } from '@nestjs/common';
+
 @Injectable()
 export class UserService {
   test(): IUser[] {
@@ -16,7 +18,6 @@ export class UserService {
   }
   findOne(id: string, fields?: string | string[]): Partial<IUser> {
     const allUsers = this.findAll();
-
     const user = allUsers.find((u) => String(u.id) === String(id));
 
     if (!user) {
@@ -25,7 +26,6 @@ export class UserService {
 
     if (fields !== undefined) {
       let fieldArray: string[] = [];
-
       if (typeof fields === 'string') {
         fieldArray = fields
           .split(',')
@@ -42,9 +42,28 @@ export class UserService {
           Object.assign(filteredUser, { [key]: user[key] });
         }
       });
-
       return filteredUser;
     }
+
     return user;
+  }
+  create(dto: CreateUserDto): IUser {
+    const users = this.findAll();
+
+    const lastId =
+      users.length > 0 ? Math.max(...users.map((u) => Number(u.id))) : 0;
+
+    const newId = (lastId + 1).toString();
+
+    const newUser: IUser = {
+      id: newId,
+      ...dto,
+    };
+
+    users.push(newUser);
+    const filePath = path.join(process.cwd(), 'data', 'users.json');
+    fs.writeFileSync(filePath, JSON.stringify(users, null, 2), 'utf-8');
+
+    return newUser;
   }
 }
