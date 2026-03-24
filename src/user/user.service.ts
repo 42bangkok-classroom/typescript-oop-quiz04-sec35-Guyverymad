@@ -14,28 +14,35 @@ export class UserService {
     const users: IUser[] = JSON.parse(fileData) as unknown as IUser[];
     return users;
   }
-  findOne(id: string, fields?: string): Partial<IUser> {
+  findOne(id: string, fields?: string | string[]): Partial<IUser> {
     const allUsers = this.findAll();
 
-    const user = allUsers.find((u: IUser) => u.id === Number(id));
+    const user = allUsers.find((u) => String(u.id) === String(id));
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    if (fields !== undefined) {
+      let fieldArray: string[] = [];
 
-    if (fields) {
-      const fieldArray = fields.split(',');
+      if (typeof fields === 'string') {
+        
+        fieldArray = fields.split(',').map((f) => f.trim()).filter((f) => f !== '');
+      } else if (Array.isArray(fields)) {
+        
+      }
+
       const filteredUser: Partial<IUser> = {};
-
       fieldArray.forEach((field) => {
-        const key = field.trim() as keyof IUser;
+        const key = field as keyof IUser;
         if (user[key] !== undefined) {
+  
           Object.assign(filteredUser, { [key]: user[key] });
         }
       });
+
       return filteredUser;
     }
-
     return user;
   }
 }
