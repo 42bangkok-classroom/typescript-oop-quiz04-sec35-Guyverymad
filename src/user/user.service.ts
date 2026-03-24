@@ -22,21 +22,23 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     if (fields !== undefined) {
       let fieldArray: string[] = [];
 
       if (typeof fields === 'string') {
-        
-        fieldArray = fields.split(',').map((f) => f.trim()).filter((f) => f !== '');
+        fieldArray = fields
+          .split(',')
+          .map((f) => f.trim())
+          .filter((f) => f !== '');
       } else if (Array.isArray(fields)) {
-        
+        fieldArray = fields;
       }
 
       const filteredUser: Partial<IUser> = {};
       fieldArray.forEach((field) => {
         const key = field as keyof IUser;
         if (user[key] !== undefined) {
-  
           Object.assign(filteredUser, { [key]: user[key] });
         }
       });
