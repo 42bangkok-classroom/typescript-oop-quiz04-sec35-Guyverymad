@@ -11,27 +11,15 @@ import {
 import { UserService } from './user.service';
 import { IUser } from './user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
-@Controller('users')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+
+@Controller('user')
+export class UserController{
+  constructor(private readonly userService: UserService){} 
   @Get('test')
-  test(): IUser[] {
+  test(): string {
     return this.userService.test();
   }
-  @Get()
-  findAll(): IUser[] {
-    return this.userService.findAll();
-  }
-  @Get(':id')
-  findOne(
-    @Param('id') id: string,
-    @Query('fields') fields?: string,
-  ): Partial<IUser> {
-    return this.userService.findOne(id, fields);
-  }
-  @Post()
-  @UsePipes(new ValidationPipe({ whitelist: true }))
-  create(@Body() createUserDto: CreateUserDto): IUser {
-    return this.userService.create(createUserDto);
-  }
+
+  
+  
 }
